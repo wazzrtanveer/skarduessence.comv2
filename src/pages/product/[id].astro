@@ -48,13 +48,22 @@ const { product } = Astro.props;
         </div>
 
         <div class="flex flex-col gap-4 pt-8">
-          <button 
-            id="add-to-cart-large"
-            class="btn-primary w-full py-6 text-base"
-            data-product={JSON.stringify(product)}
-          >
-            Add to Cart
-          </button>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <button 
+              id="add-to-cart-large"
+              class="btn-secondary py-6 text-base"
+              data-product={JSON.stringify(product)}
+            >
+              Add to Cart
+            </button>
+            <button 
+              id="buy-now"
+              class="btn-primary py-6 text-base bg-brand-gold text-canvas-night border-brand-gold hover:bg-transparent hover:text-white"
+              data-product={JSON.stringify(product)}
+            >
+              Shop Now
+            </button>
+          </div>
           
           <div class="grid grid-cols-2 gap-4">
             <div class="p-4 border border-hairline-on-dark rounded-sm text-center">
@@ -96,10 +105,18 @@ const { product } = Astro.props;
 <script>
   import { addToCart } from '../../store/cart.js';
 
-  const btn = document.getElementById('add-to-cart-large');
-  btn?.addEventListener('click', () => {
-    const product = JSON.parse(btn.getAttribute('data-product') || '{}');
+  const addBtn = document.getElementById('add-to-cart-large');
+  const buyBtn = document.getElementById('buy-now');
+
+  addBtn?.addEventListener('click', () => {
+    const product = JSON.parse(addBtn.getAttribute('data-product') || '{}');
     addToCart(product);
     alert(`${product.name} added to cart!`);
+  });
+
+  buyBtn?.addEventListener('click', () => {
+    const product = JSON.parse(buyBtn.getAttribute('data-product') || '{}');
+    addToCart(product);
+    window.location.href = '/cart';
   });
 </script>
