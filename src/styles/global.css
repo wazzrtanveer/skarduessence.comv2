@@ -1,0 +1,96 @@
+@import "tailwindcss";
+
+@theme {
+  /* Colors inspired by Skardu Essence & SpaceX/Tesla aesthetic */
+  --color-brand-green: #1A2F23;
+  --color-brand-brown: #4A3728;
+  --color-brand-gold: #C5A059;
+  --color-brand-offwhite: #F5F5F0;
+  
+  --color-canvas-night: #000000;
+  --color-canvas-night-soft: #0a0a0a;
+  --color-canvas-light: #ffffff;
+  --color-canvas-cool: #f0f0fa;
+  
+  --color-on-primary: #ffffff;
+  --color-on-primary-mute: #f0f0fa;
+  
+  --color-ink: #000000;
+  --color-ink-mute: #5a5a5f;
+  
+  --color-hairline-on-dark: #3a3a3f;
+  --color-hairline-on-light: #e0e0e8;
+
+  /* Typography */
+  --font-display: "D-DIN-Bold", "Inter", "Arial Narrow", sans-serif;
+  --font-body: "D-DIN", "Inter", "Arial", sans-serif;
+
+  /* Spacing */
+  --spacing-huge: 48px;
+
+  /* Radius */
+  --radius-pill: 32px;
+}
+
+@layer base {
+  @font-face {
+    font-family: 'D-DIN';
+    src: url('https://fonts.cdnfonts.com/s/14067/D-DIN.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'D-DIN-Bold';
+    src: url('https://fonts.cdnfonts.com/s/14067/D-DIN-Bold.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+  }
+
+  html {
+    @apply bg-canvas-night;
+  }
+
+  body {
+    @apply bg-canvas-night text-on-primary font-body;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display uppercase tracking-[1.6px];
+    text-wrap: balance;
+  }
+
+  /* Accessible Focus States */
+  :focus-visible {
+    @apply outline-none ring-2 ring-brand-gold ring-offset-2 ring-offset-canvas-night;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply border border-on-primary rounded-pill px-6 py-4 uppercase font-display text-[13px] tracking-[1.17px] hover:bg-on-primary hover:text-canvas-night transition-all duration-300 inline-block text-center cursor-pointer;
+  }
+
+  .btn-secondary {
+    @apply bg-white/10 backdrop-blur-sm border border-on-primary/20 rounded-pill px-6 py-4 uppercase font-display text-[13px] tracking-[1.17px] hover:bg-white/20 transition-all duration-300 inline-block text-center cursor-pointer;
+  }
+
+  .nav-link {
+    @apply uppercase text-[12px] font-body tracking-[0.96px] hover:opacity-70 transition-opacity cursor-pointer;
+  }
+
+  .card-surface {
+    @apply bg-canvas-night-soft border border-hairline-on-dark;
+  }
+
+  .text-mute {
+    @apply text-on-primary-mute;
+  }
+
+  /* Avoiding nested @apply to prevent build errors */
+  .btn-ghost-dark {
+    @apply border border-on-primary rounded-pill px-6 py-4 uppercase font-display text-[13px] tracking-[1.17px] hover:bg-on-primary hover:text-canvas-night transition-all duration-300 inline-block text-center cursor-pointer;
+  }
+  .btn-ghost-light {
+    @apply border border-on-primary rounded-pill px-6 py-4 uppercase font-display text-[13px] tracking-[1.17px] hover:bg-on-primary hover:text-canvas-night transition-all duration-300 inline-block text-center cursor-pointer;
+  }
+}

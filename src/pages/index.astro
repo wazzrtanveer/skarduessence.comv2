@@ -1,11 +1,156 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
+import { products } from '../data/products.js';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const featuredProducts = products.filter(p => p.featured);
 ---
 
-<Layout>
-	<Welcome />
+<Layout title="Home">
+  <!-- Hero Section -->
+  <section class="relative h-screen w-full flex flex-col items-center justify-between py-24 text-center overflow-hidden">
+    <div class="absolute inset-0 z-0">
+      <img 
+        src="/mountains.jpg" 
+        alt="Skardu Mountains" 
+        class="w-full h-full object-cover"
+      />
+      <div class="absolute inset-0 bg-black/20"></div>
+    </div>
+    
+    <div class="relative z-10 pt-12">
+      <h1 class="text-5xl md:text-8xl font-display font-bold text-white drop-shadow-2xl">
+        Pure Skardu
+      </h1>
+      <p class="text-xl md:text-2xl font-body text-white mt-4 opacity-90 tracking-widest">
+        Nature's Finest Essence
+      </p>
+    </div>
+
+    <div class="relative z-10 flex flex-col md:flex-row gap-4 mb-12">
+      <a href="/shop" class="btn-primary min-w-[200px]">Shop Now</a>
+      <a href="/about" class="btn-secondary min-w-[200px]">Our Story</a>
+    </div>
+  </section>
+
+  <!-- Featured Products Slider -->
+  <section class="relative bg-canvas-night py-20 px-6 md:px-12 overflow-hidden border-t border-hairline-on-dark">
+    <div class="max-w-7xl mx-auto">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-8">
+        <div>
+          <h2 class="text-3xl md:text-5xl font-display font-bold mb-4">Featured Treasures</h2>
+          <p class="text-mute font-body max-w-lg">Hand-picked premium essentials from the heart of Skardu, curated for your wellbeing.</p>
+        </div>
+        <div class="flex gap-4">
+          <button id="prev-slide" class="w-12 h-12 rounded-full border border-hairline-on-dark flex items-center justify-center hover:bg-white/10 transition-colors cursor-pointer" aria-label="Previous Slide">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+          </button>
+          <button id="next-slide" class="w-12 h-12 rounded-full border border-hairline-on-dark flex items-center justify-center hover:bg-white/10 transition-colors cursor-pointer" aria-label="Next Slide">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="relative overflow-hidden h-auto">
+        <div id="slider-track" class="flex gap-8 transition-transform duration-700 ease-out cursor-grab active:cursor-grabbing items-stretch">
+          {featuredProducts.map((product) => (
+            <div class="w-[300px] md:w-[350px] flex-shrink-0">
+              <div class="group relative card-surface rounded-sm overflow-hidden flex flex-col h-[580px] transition-all">
+                <!-- Image Container with Fixed Height -->
+                <a href={`/product/${product.id}`} class="block w-full h-[320px] overflow-hidden bg-canvas-night-soft">
+                  <img 
+                    src={product.image} 
+                    alt={product.name} 
+                    class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                </a>
+                
+                <!-- Content Section -->
+                <div class="p-6 flex flex-col flex-grow relative">
+                  <div class="flex justify-between items-start mb-4 gap-2">
+                    <h3 class="text-lg font-display font-bold uppercase tracking-wider line-clamp-2 leading-tight">{product.name}</h3>
+                    <span class="font-body font-bold text-brand-gold whitespace-nowrap text-sm">Rs. {product.price.toLocaleString()}</span>
+                  </div>
+                  
+                  <p class="text-mute text-xs mb-4 line-clamp-3 leading-relaxed">{product.description}</p>
+                  
+                  <!-- Bottom Actions - Fixed Position -->
+                  <div class="mt-auto flex flex-col gap-2">
+                    <a href={`/product/${product.id}`} class="btn-primary w-full text-center text-[10px] py-3">View Details</a>
+                    <button 
+                      class="btn-secondary w-full add-to-cart-btn text-[10px] py-3"
+                      data-product={JSON.stringify(product)}
+                    >
+                      Quick Add
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Brand Story Section -->
+  <section class="relative py-32 px-6 bg-canvas-night-soft">
+    <div class="max-w-4xl mx-auto text-center">
+      <h2 class="text-3xl md:text-5xl font-display font-bold mb-8">Crafted by the Mountains</h2>
+      <p class="text-lg md:text-xl text-mute leading-relaxed mb-12 font-body italic">
+        "In the heart of the Karakoram, where the air is pure and the water runs from glaciers, we find the true essence of life. Our mission is to share these ancient treasures with the world, preserving the heritage of Skardu and the purity of nature."
+      </p>
+      <a href="/about" class="btn-primary">Read Our Full Story</a>
+    </div>
+  </section>
 </Layout>
+
+<script>
+  import { addToCart } from '../store/cart.js';
+
+  // Slider Logic
+  const track = document.getElementById('slider-track');
+  const prevBtn = document.getElementById('prev-slide');
+  const nextBtn = document.getElementById('next-slide');
+  let currentIdx = 0;
+
+  const updateSlider = () => {
+    if (!track) return;
+    const itemWidth = (track.children[0] as HTMLElement).offsetWidth + 32; // width + gap
+    track.style.transform = `translateX(-${currentIdx * itemWidth}px)`;
+  };
+
+  nextBtn?.addEventListener('click', () => {
+    const visibleItems = window.innerWidth >= 1024 ? 3 : window.innerWidth >= 768 ? 2 : 1;
+    if (currentIdx < track.children.length - visibleItems) {
+      currentIdx++;
+      updateSlider();
+    } else {
+      currentIdx = 0; // Loop back
+      updateSlider();
+    }
+  });
+
+  prevBtn?.addEventListener('click', () => {
+    if (currentIdx > 0) {
+      currentIdx--;
+      updateSlider();
+    } else {
+      const visibleItems = window.innerWidth >= 1024 ? 3 : window.innerWidth >= 768 ? 2 : 1;
+      currentIdx = track.children.length - visibleItems;
+      updateSlider();
+    }
+  });
+
+  // Handle window resize
+  window.addEventListener('resize', updateSlider);
+
+  // Add to Cart Logic
+  const addButtons = document.querySelectorAll('.add-to-cart-btn');
+  addButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const product = JSON.parse(btn.getAttribute('data-product'));
+      addToCart(product);
+      alert(`${product.name} added to cart!`);
+    });
+  });
+</script>

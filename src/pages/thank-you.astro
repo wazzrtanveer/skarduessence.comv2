@@ -1,0 +1,30 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Thank You">
+  <div class="pt-32 pb-24 px-6 md:px-12 bg-canvas-night light:bg-canvas-light text-on-primary light:text-ink min-h-screen flex items-center justify-center transition-colors duration-500">
+    <div class="max-w-2xl text-center">
+      <div class="mb-8 flex justify-center">
+        <div class="w-20 h-20 rounded-full border-2 border-brand-gold flex items-center justify-center text-brand-gold text-4xl animate-bounce">
+          ✓
+        </div>
+      </div>
+      <h1 class="text-4xl md:text-6xl font-display font-bold mb-6 uppercase tracking-widest">Order Confirmed</h1>
+      <p class="text-xl text-mute font-body mb-12">
+        Thank you for your purchase. We are preparing your treasures from the mountains. You will receive an email confirmation shortly.
+      </p>
+      <div class="flex flex-col md:flex-row gap-4 justify-center">
+        <a href="/shop" class="btn-primary">Continue Shopping</a>
+        <a href="/" class="btn-secondary">Return Home</a>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  import { clearCart } from '../store/cart.js';
+  
+  // Clear cart upon successful order
+  clearCart();
+</script>

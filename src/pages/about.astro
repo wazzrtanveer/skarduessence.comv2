@@ -1,0 +1,45 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Our Story">
+  <div class="bg-canvas-night text-on-primary">
+    <!-- Hero -->
+    <section class="relative h-[60vh] w-full flex items-center justify-center overflow-hidden">
+      <img 
+        src="/ourstory.jpg" 
+        alt="Skardu Valley" 
+        class="absolute inset-0 w-full h-full object-cover opacity-60"
+      />
+      <h1 class="relative z-10 text-5xl md:text-7xl font-display font-bold uppercase tracking-widest">Our Story</h1>
+    </section>
+
+    <!-- Content -->
+    <section class="py-24 px-6 md:px-12 max-w-4xl mx-auto">
+      <div class="space-y-12 font-body text-lg text-mute leading-relaxed">
+        <p class="text-2xl text-on-primary light:text-ink font-display italic">
+          "Skardu Essence was born from a deep respect for the traditions and natural bounty of Gilgit-Baltistan."
+        </p>
+        <p>
+          Nestled among the towering peaks of the Karakoram range, the Skardu valley has for centuries been a source of some of the world's most potent natural treasures. From the high-altitude mineral resins to the wild-flower honey of the alpine forests, the region offers a purity that is increasingly rare in our modern world.
+        </p>
+        <p>
+          Founded in 2026, Skardu Essence aims to bridge the gap between these remote mountain valleys and the global community. We work directly with local foragers, farmers, and artisans, ensuring that every product we offer is ethically sourced and that the benefits of our work return to the hands that harvest them.
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 py-12">
+          <div class="p-8 card-surface rounded-sm">
+            <h3 class="font-display font-bold uppercase mb-4 text-brand-gold tracking-widest">Purity First</h3>
+            <p class="text-sm">We never compromise on the quality of our sourcing. No additives, no fillers, just the pure essence of the mountains.</p>
+          </div>
+          <div class="p-8 card-surface rounded-sm">
+            <h3 class="font-display font-bold uppercase mb-4 text-brand-gold tracking-widest">Ethical Sourcing</h3>
+            <p class="text-sm">Our direct-trade model ensures that local communities receive fair compensation and that harvesting remains sustainable.</p>
+          </div>
+        </div>
+        <p>
+          Today, we continue to explore the vast valleys and high plateaus of the region, seeking out the finest natural ingredients to bring the spirit of Skardu to your home.
+        </p>
+      </div>
+    </section>
+  </div>
+</Layout>

@@ -1,0 +1,136 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { SITE_CONFIG } from '../data/config.js';
+---
+
+<Layout title="Your Cart">
+  <div class="pt-32 pb-24 px-6 md:px-12 bg-canvas-night text-on-primary min-h-screen">
+    <div class="max-w-4xl mx-auto">
+      <h1 class="text-4xl md:text-6xl font-display font-bold mb-12 uppercase tracking-tight">Your Cart</h1>
+      
+      <div id="cart-container" class="space-y-8">
+        <!-- Cart items will be injected here -->
+        <div class="flex flex-col items-center justify-center py-24 text-mute animate-pulse">
+          <p class="font-display uppercase tracking-widest">Loading your treasures...</p>
+        </div>
+      </div>
+
+      <div id="cart-summary" class="mt-12 pt-8 border-t border-hairline-on-dark hidden">
+        <div class="flex justify-between items-center mb-8">
+          <span class="text-xl font-display font-bold uppercase tracking-widest">Subtotal</span>
+          <span id="cart-total" class="text-2xl font-body font-bold text-brand-gold">Rs. 0</span>
+        </div>
+        
+        <button 
+          id="whatsapp-checkout"
+          class="btn-primary w-full py-6 text-base bg-brand-gold text-ink border-none flex items-center justify-center gap-3"
+        >
+          Proceed to Checkout via WhatsApp
+        </button>
+        
+        <p class="mt-4 text-center text-[10px] text-mute uppercase tracking-widest">
+          Delivery and order confirmation will be handled on WhatsApp
+        </p>
+      </div>
+
+      <div id="empty-cart" class="hidden flex flex-col items-center justify-center py-24 text-center">
+        <p class="text-xl font-body mb-8">Your cart is currently empty.</p>
+        <a href="/shop" class="btn-primary">Continue Shopping</a>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  import { cartItems, removeFromCart, updateQuantity, clearCart } from '../store/cart.js';
+  import { SITE_CONFIG } from '../data/config.js';
+
+  const cartContainer = document.getElementById('cart-container');
+  const cartSummary = document.getElementById('cart-summary');
+  const cartTotal = document.getElementById('cart-total');
+  const emptyCart = document.getElementById('empty-cart');
+  const checkoutButton = document.getElementById('whatsapp-checkout');
+
+  cartItems.subscribe(items => {
+    if (items.length === 0) {
+      cartContainer.classList.add('hidden');
+      cartSummary.classList.add('hidden');
+      emptyCart.classList.remove('hidden');
+      return;
+    }
+
+    cartContainer.classList.remove('hidden');
+    cartSummary.classList.remove('hidden');
+    emptyCart.classList.add('hidden');
+
+    cartContainer.innerHTML = items.map(item => `
+      <div class="flex gap-6 items-center border-b border-hairline-on-dark pb-8">
+        <div class="w-24 h-24 bg-canvas-night-soft rounded-sm overflow-hidden flex-shrink-0">
+          <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover" />
+        </div>
+        <div class="flex-grow">
+          <div class="flex justify-between items-start">
+            <div>
+              <h3 class="font-display font-bold uppercase text-lg">${item.name}</h3>
+              <p class="text-[12px] text-mute uppercase tracking-widest">${item.category}</p>
+            </div>
+            <button class="remove-btn text-mute hover:text-brand-gold transition-colors" data-id="${item.id}">&times;</button>
+          </div>
+          <div class="flex justify-between items-center mt-4">
+            <div class="flex items-center border border-hairline-on-dark rounded-sm">
+              <button class="qty-btn px-3 py-1 hover:bg-white/5" data-id="${item.id}" data-action="minus">-</button>
+              <span class="px-4 py-1 text-sm font-bold border-x border-hairline-on-dark">${item.quantity}</span>
+              <button class="qty-btn px-3 py-1 hover:bg-white/5" data-id="${item.id}" data-action="plus">+</button>
+            </div>
+            <span class="font-bold text-brand-gold">${SITE_CONFIG.currencySymbol} ${(item.price * item.quantity).toLocaleString()}</span>
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    const total = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    cartTotal.innerText = `${SITE_CONFIG.currencySymbol} ${total.toLocaleString()}`;
+
+    // Add event listeners to buttons
+    document.querySelectorAll('.remove-btn').forEach(btn => {
+      btn.addEventListener('click', () => removeFromCart(btn.getAttribute('data-id')));
+    });
+
+    document.querySelectorAll('.qty-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-id');
+        const action = btn.getAttribute('data-action');
+        const currentItem = items.find(i => i.id === id);
+        if (currentItem) {
+          updateQuantity(id, action === 'plus' ? currentItem.quantity + 1 : currentItem.quantity - 1);
+        }
+      });
+    });
+  });
+
+  checkoutButton.addEventListener('click', () => {
+    const items = cartItems.get();
+    if (items.length === 0) return;
+
+    let message = `*Order from ${SITE_CONFIG.name}*\n\n`;
+    items.forEach((item, index) => {
+      message += `${index + 1}. *${item.name}*\n`;
+      message += `   Qty: ${item.quantity}\n`;
+      message += `   Price: ${SITE_CONFIG.currencySymbol} ${item.price.toLocaleString()} each\n`;
+      message += `   Subtotal: ${SITE_CONFIG.currencySymbol} ${(item.price * item.quantity).toLocaleString()}\n\n`;
+    });
+
+    const total = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    message += `*Total Amount: ${SITE_CONFIG.currencySymbol} ${total.toLocaleString()}*\n\n`;
+    message += `Please confirm my order. Thank you!`;
+
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappUrl = `https://wa.me/${SITE_CONFIG.whatsappNumber}?text=${encodedMessage}`;
+
+    window.open(whatsappUrl, '_blank');
+    
+    // Optional: clear cart after redirecting
+    // clearCart();
+    // window.location.href = '/thank-you';
+  });
+</script>
