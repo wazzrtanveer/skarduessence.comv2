@@ -77,7 +77,12 @@ const featuredProducts = products.filter(p => p.featured);
                   <div class="mt-auto flex flex-col gap-2">
                     <div class="grid grid-cols-2 gap-2">
                       <a href={`/product/${product.id}`} class="btn-primary w-full text-center text-[10px] py-3 px-0">Details</a>
-                      <a href={`/product/${product.id}`} class="btn-primary w-full text-center text-[10px] py-3 px-0 bg-brand-gold text-canvas-night border-brand-gold hover:bg-transparent hover:text-white">Shop Now</a>
+                      <button 
+                        class="btn-primary w-full text-center text-[10px] py-3 px-0 bg-brand-gold text-canvas-night border-brand-gold hover:bg-transparent hover:text-white buy-now-btn"
+                        data-product={JSON.stringify(product)}
+                      >
+                        Shop Now
+                      </button>
                     </div>
                     <button 
                       class="btn-secondary w-full add-to-cart-btn text-[10px] py-3"
@@ -255,11 +260,21 @@ const featuredProducts = products.filter(p => p.featured);
 
   // Add to Cart Logic
   const addButtons = document.querySelectorAll('.add-to-cart-btn');
+  const buyButtons = document.querySelectorAll('.buy-now-btn');
+
   addButtons.forEach(btn => {
     btn.addEventListener('click', () => {
       const product = JSON.parse(btn.getAttribute('data-product'));
       addToCart(product);
       alert(`${product.name} added to cart!`);
+    });
+  });
+
+  buyButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const product = JSON.parse(btn.getAttribute('data-product'));
+      addToCart(product);
+      window.location.href = '/cart';
     });
   });
 </script>
