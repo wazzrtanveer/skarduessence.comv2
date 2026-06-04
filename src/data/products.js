@@ -1,10 +1,10 @@
 export const products = [
   {
-    id: "jiyale-gandu",
-    name: "jiyale gandu",
-    description: "professional fonxong",
+    id: "jiyale-chinaal",
+    name: "jiyale chinaal",
+    description: "10 years in Heera mandi lahore",
     price: 150,
-    image: "/jiyale.JPG",
+    image: "/jiyale new.JPG",
     category: "Specialty",
     featured: true
   },
