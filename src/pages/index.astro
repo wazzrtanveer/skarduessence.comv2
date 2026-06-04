@@ -157,45 +157,72 @@ const featuredProducts = products.filter(p => p.featured);
   // Touch Events for Mobile Swiping
   track?.addEventListener('touchstart', (e) => {
     startX = e.touches[0].clientX;
+    const startY = e.touches[0].clientY;
+    (track as any)._startY = startY; 
     isDragging = true;
+    (track as any)._isScrolling = false;
     track.style.transition = 'none';
+    stopAutoSlide();
   });
 
   track?.addEventListener('touchmove', (e) => {
     if (!isDragging) return;
     const currentX = e.touches[0].clientX;
-    const diff = currentX - startX;
-    track.style.transform = `translateX(${prevTranslate + diff}px)`;
-  });
+    const currentY = e.touches[0].clientY;
+    const diffX = currentX - startX;
+    const diffY = currentY - (track as any)._startY;
+
+    if (!(track as any)._isScrolling && Math.abs(diffY) > Math.abs(diffX) && Math.abs(diffY) > 10) {
+      (track as any)._isScrolling = true;
+      isDragging = false;
+      updateSlider();
+      return;
+    }
+
+    if ((track as any)._isScrolling) return;
+
+    if (Math.abs(diffX) > 10) {
+      e.preventDefault();
+      track.style.transform = `translateX(${prevTranslate + diffX}px)`;
+    }
+  }, { passive: false });
 
   track?.addEventListener('touchend', (e) => {
-    if (!isDragging) return;
+    if (!isDragging && !(track as any)._isScrolling) return;
     isDragging = false;
     track.style.transition = 'transform 0.7s ease-out';
+    if ((track as any)._isScrolling) {
+      (track as any)._isScrolling = false;
+      return;
+    }
     const endX = e.changedTouches[0].clientX;
     const diff = endX - startX;
-
-    if (Math.abs(diff) > 50) { // Threshold for swipe
-      if (diff > 0) {
-        prevSlide();
-      } else {
-        nextSlide();
-      }
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) prevSlide();
+      else nextSlide();
     } else {
-      updateSlider(); // Snap back
+      updateSlider();
     }
   });
 
   // Handle window resize
   window.addEventListener('resize', updateSlider);
-  updateSlider(); // Initial call to set state
+  updateSlider();
 
   // Auto-slide logic for mobile only
   let autoSlideInterval: number | undefined;
 
   const startAutoSlide = () => {
     if (window.innerWidth < 768 && !autoSlideInterval) {
-      autoSlideInterval = setInterval(nextSlide, 3000);
+      autoSlideInterval = setInterval(() => {
+        const visibleItems = getVisibleItems();
+        if (currentIdx < track.children.length - visibleItems) {
+          currentIdx++;
+        } else {
+          currentIdx = 0;
+        }
+        updateSlider();
+      }, 3000);
     }
   };
 
