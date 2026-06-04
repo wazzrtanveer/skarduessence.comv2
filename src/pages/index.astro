@@ -190,6 +190,39 @@ const featuredProducts = products.filter(p => p.featured);
   window.addEventListener('resize', updateSlider);
   updateSlider(); // Initial call to set state
 
+  // Auto-slide logic for mobile only
+  let autoSlideInterval: number | undefined;
+
+  const startAutoSlide = () => {
+    if (window.innerWidth < 768 && !autoSlideInterval) {
+      autoSlideInterval = setInterval(nextSlide, 3000);
+    }
+  };
+
+  const stopAutoSlide = () => {
+    if (autoSlideInterval) {
+      clearInterval(autoSlideInterval);
+      autoSlideInterval = undefined;
+    }
+  };
+
+  // Intersection Observer to start/stop auto-slide when visible
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        startAutoSlide();
+      } else {
+        stopAutoSlide();
+      }
+    });
+  }, { threshold: 0.5 });
+
+  if (track) observer.observe(track);
+
+  // Stop auto-slide on user interaction
+  track?.addEventListener('touchstart', stopAutoSlide);
+  track?.addEventListener('mousedown', stopAutoSlide);
+
   // Add to Cart Logic
   const addButtons = document.querySelectorAll('.add-to-cart-btn');
   addButtons.forEach(btn => {
