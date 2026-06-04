@@ -2,27 +2,38 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="404 - Page Not Found">
-  <section class="min-h-[70vh] flex items-center justify-center px-4 py-20">
-    <div class="text-center">
-      <h1 class="text-9xl font-bold text-emerald-600 mb-4">404</h1>
-      <h2 class="text-3xl font-semibold text-slate-800 mb-6">Oops! Page not found</h2>
-      <p class="text-lg text-slate-600 mb-10 max-w-md mx-auto">
-        The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.
+<Layout title="404 - Essence Not Found">
+  <section class="relative h-screen w-full flex items-center justify-center overflow-hidden">
+    <!-- Background Image with Overlay -->
+    <div class="absolute inset-0 z-0">
+      <img 
+        src="/mountains.jpg" 
+        alt="Skardu Mountains" 
+        class="w-full h-full object-cover opacity-30 grayscale"
+      />
+      <div class="absolute inset-0 bg-canvas-night/80"></div>
+    </div>
+
+    <div class="relative z-10 text-center px-6">
+      <div class="mb-6">
+        <h1 class="text-[120px] md:text-[200px] leading-none font-display font-bold text-brand-gold/20 tracking-tighter">
+          404
+        </h1>
+        <div class="mt-[-40px] md:mt-[-70px]">
+          <h2 class="text-3xl md:text-5xl font-display font-bold uppercase tracking-widest text-white">
+            Path Unknown
+          </h2>
+          <div class="w-20 h-1 bg-brand-gold mx-auto mt-4 mb-8"></div>
+        </div>
+      </div>
+
+      <p class="text-mute font-body text-lg md:text-xl max-w-md mx-auto mb-12 opacity-80 uppercase tracking-wider">
+        The essence you seek has vanished into the mountain mist.
       </p>
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a 
-          href="/" 
-          class="inline-block bg-emerald-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-200"
-        >
-          Return Home
-        </a>
-        <a 
-          href="/shop" 
-          class="inline-block bg-white text-emerald-600 border-2 border-emerald-600 px-8 py-3 rounded-lg font-medium hover:bg-emerald-50 transition-colors"
-        >
-          Continue Shopping
-        </a>
+
+      <div class="flex flex-col md:flex-row gap-6 justify-center">
+        <a href="/" class="btn-primary min-w-[200px]">Return to Base</a>
+        <a href="/shop" class="btn-secondary min-w-[200px]">Explore Treasures</a>
       </div>
     </div>
   </section>
