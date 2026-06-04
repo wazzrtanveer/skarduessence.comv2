@@ -56,12 +56,18 @@ const categories = [...new Set(products.map(p => p.category))];
               </div>
               <p class="text-mute text-sm mb-6 flex-grow">{product.description}</p>
               
-              <button 
-                class="btn-primary w-full add-to-cart-btn"
-                data-product={JSON.stringify(product)}
-              >
-                Add to Cart
-              </button>
+              <div class="mt-auto flex flex-col gap-2">
+                <div class="grid grid-cols-2 gap-2">
+                  <a href={`/product/${product.id}`} class="btn-primary w-full text-center text-[10px] py-3 px-0">Details</a>
+                  <a href={`/product/${product.id}`} class="btn-primary w-full text-center text-[10px] py-3 px-0 bg-brand-gold text-canvas-night border-brand-gold hover:bg-transparent hover:text-white">Shop Now</a>
+                </div>
+                <button 
+                  class="btn-secondary w-full add-to-cart-btn text-[10px] py-3"
+                  data-product={JSON.stringify(product)}
+                >
+                  Quick Add to Cart
+                </button>
+              </div>
             </div>
           </div>
         ))}
