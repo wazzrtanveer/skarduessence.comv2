@@ -1,8 +1,50 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { products } from '../data/products.js';
+import { products as localProducts } from '../data/products.js';
+import { sanityClient, urlFor } from '../sanity/lib/client.js';
 
-const featuredProducts = products.filter(p => p.featured);
+// Fetch home page content and featured products
+let homeContent = null;
+let featuredProducts = [];
+
+try {
+  const [sanityHome, sanityProducts] = await Promise.all([
+    sanityClient.fetch(`*[_type == "homePage"][0]`),
+    sanityClient.fetch(`*[_type == "product" && featured == true] {
+      _id,
+      name,
+      description,
+      price,
+      image,
+      category,
+      featured,
+      "id": slug.current
+    }`)
+  ]);
+
+  homeContent = sanityHome;
+
+  if (sanityProducts && sanityProducts.length > 0) {
+    featuredProducts = sanityProducts.map(p => ({
+      ...p,
+      image: p.image ? urlFor(p.image).url() : '/placeholder.png'
+    }));
+  } else {
+    featuredProducts = localProducts.filter(p => p.featured);
+  }
+} catch (error) {
+  console.error("Error fetching from Sanity:", error);
+  featuredProducts = localProducts.filter(p => p.featured);
+}
+
+// Fallback values for home content
+const heroHeading = homeContent?.heroHeading || "Pure Skardu";
+const heroSubheading = homeContent?.heroSubheading || "Nature's Finest Essence";
+const heroImage = homeContent?.heroImage ? urlFor(homeContent.heroImage).url() : "/mountains.jpg";
+const featuredTitle = homeContent?.featuredSectionTitle || "Featured Treasures";
+const featuredDesc = homeContent?.featuredSectionDesc || "Hand-picked premium essentials from the heart of Skardu, curated for your wellbeing.";
+const storyHeading = homeContent?.storySectionHeading || "Crafted by the Mountains";
+const storyQuote = homeContent?.storySectionQuote || '"In the heart of the Karakoram, where the air is pure and the water runs from glaciers, we find the true essence of life. Our mission is to share these ancient treasures with the world, preserving the heritage of Skardu and the purity of nature."';
 ---
 
 <Layout title="Home">
@@ -10,8 +52,8 @@ const featuredProducts = products.filter(p => p.featured);
   <section class="relative h-screen w-full flex flex-col items-center justify-between py-24 text-center overflow-hidden">
     <div class="absolute inset-0 z-0">
       <img 
-        src="/mountains.jpg" 
-        alt="Skardu Mountains" 
+        src={heroImage} 
+        alt="Hero Background" 
         class="w-full h-full object-cover"
       />
       <div class="absolute inset-0 bg-black/20"></div>
@@ -19,10 +61,10 @@ const featuredProducts = products.filter(p => p.featured);
     
     <div class="relative z-10 pt-12">
       <h1 class="text-5xl md:text-8xl font-display font-bold text-white drop-shadow-2xl">
-        Pure Skardu
+        {heroHeading}
       </h1>
       <p class="text-xl md:text-2xl font-body text-white mt-4 opacity-90 tracking-widest">
-        Nature's Finest Essence
+        {heroSubheading}
       </p>
     </div>
 
@@ -37,8 +79,8 @@ const featuredProducts = products.filter(p => p.featured);
     <div class="max-w-7xl mx-auto">
       <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-8">
         <div>
-          <h2 class="text-3xl md:text-5xl font-display font-bold mb-4">Featured Treasures</h2>
-          <p class="text-mute font-body max-w-lg">Hand-picked premium essentials from the heart of Skardu, curated for your wellbeing.</p>
+          <h2 class="text-3xl md:text-5xl font-display font-bold mb-4">{featuredTitle}</h2>
+          <p class="text-mute font-body max-w-lg">{featuredDesc}</p>
         </div>
         <div class="flex gap-4">
           <button id="prev-slide" class="w-12 h-12 rounded-full border border-hairline-on-dark flex items-center justify-center hover:bg-white/10 transition-colors cursor-pointer" aria-label="Previous Slide">
@@ -103,9 +145,9 @@ const featuredProducts = products.filter(p => p.featured);
   <!-- Brand Story Section -->
   <section class="relative py-32 px-6 bg-canvas-night-soft">
     <div class="max-w-4xl mx-auto text-center">
-      <h2 class="text-3xl md:text-5xl font-display font-bold mb-8">Crafted by the Mountains</h2>
+      <h2 class="text-3xl md:text-5xl font-display font-bold mb-8">{storyHeading}</h2>
       <p class="text-lg md:text-xl text-mute leading-relaxed mb-12 font-body italic">
-        "In the heart of the Karakoram, where the air is pure and the water runs from glaciers, we find the true essence of life. Our mission is to share these ancient treasures with the world, preserving the heritage of Skardu and the purity of nature."
+        {storyQuote}
       </p>
       <a href="/about" class="btn-primary">Read Our Full Story</a>
     </div>
