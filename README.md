@@ -1,6 +1,6 @@
 # Skardu Essence - Premium Himalayan Treasures
 
-A clean, modern e-commerce platform for Skardu Essence, inspired by the minimalist design language of Tesla and SpaceX. Built with Astro and Tailwind CSS v4.
+A clean, modern e-commerce platform for Skardu Essence, inspired by the minimalist design language of Tesla and SpaceX. Built with Astro and Tailwind CSS v4. Developed by wazzrtanveer.
 
 ## Features
 
